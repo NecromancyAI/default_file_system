@@ -1,0 +1,1 @@
+{"data": {"predict": [2], "file_name": ["draw.jpeg"]}}

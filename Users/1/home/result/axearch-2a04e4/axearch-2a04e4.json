@@ -1,0 +1,1 @@
+{"fconfig": {"lr": 3.322609778493643e-05, "epochs": 4, "batch_size": 256}, "metric": {"name": "accuracy", "value": 0.87890625}}
