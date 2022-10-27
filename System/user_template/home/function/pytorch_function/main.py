@@ -6,8 +6,8 @@ import torch
 import torchvision
 import torchvision.transforms as transforms
 from tqdm import tqdm
+import innocuous.Endpoint as magic
 from innocuous.MagicObj import MagicObj
-from model import Model 
 
 class Model(nn.Module):
   def __init__(self, img_channel=1, out_channels=10):
@@ -33,7 +33,10 @@ class Model(nn.Module):
     
 def main(lr=0.001, epochs=2, batch_size=256):
     mj = MagicObj()
-    dataset_path = mj.get_dataset_path()
+    fileHelper = magic.FileHelper()
+
+    dataset_path = mj.get_path('/Users/noam/Downloads/mnist')
+
 
     train_path = os.path.join(dataset_path, 'train')
     val_path = os.path.join(dataset_path, 'val')
@@ -48,8 +51,14 @@ def main(lr=0.001, epochs=2, batch_size=256):
     train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
     val_loader = torch.utils.data.DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
 
-    model = mj.load_pytorch_model(Model()) # Auto load model or checkpoint
-
+    model = Model()
+    pretrained_state = fileHelper.get("data://checkpoint/models/checkpoint.pt")
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    prefix = 'classifier.'
+    loaded_dict = torch.load(pretrained_state, map_location=device)
+    adapted_dict = model.state_dict()
+    adapted_dict.update(loaded_dict)
+    model.load_state_dict(adapted_dict)
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=lr)
 
@@ -87,5 +96,5 @@ def main(lr=0.001, epochs=2, batch_size=256):
                     eval_acc += acc
                     tepoch.set_postfix(loss=loss.item(), accuracy=acc)
 
-        mj.torch_save(checkpoint=checkpoint, path='/home/user/workspace/results', epoch=epoch)
+        mj.torch_save(checkpoint=checkpoint, path='/Users/noam/Downloads', epoch=epoch)
         mj.log(accuracy=eval_acc/len(val_loader), loss=eval_loss/len(val_loader))
