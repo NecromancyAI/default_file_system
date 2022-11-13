@@ -9,6 +9,20 @@ from tqdm import tqdm
 import innocuous.Endpoint as magic
 from innocuous.MagicObj import MagicObj
 
+import logging
+from colorlog import ColoredFormatter
+LOG_LEVEL = logging.DEBUG
+datefmt = '%Y-%m-%d %H:%M:%S'
+LOGFORMAT = "%(log_color)s[%(asctime)s][%(levelname)-8s]%(reset)s %(log_color)s%(message)s%(reset)s"
+logging.root.setLevel(LOG_LEVEL)
+formatter = ColoredFormatter(LOGFORMAT, datefmt)
+stream = logging.StreamHandler()
+stream.setLevel(LOG_LEVEL)
+stream.setFormatter(formatter)
+log = logging.getLogger('PodApp')
+log.setLevel(LOG_LEVEL)
+log.addHandler(stream)
+
 class Model(nn.Module):
   def __init__(self, img_channel=1, out_channels=10):
     super(Model, self).__init__()
@@ -32,6 +46,13 @@ class Model(nn.Module):
     return out
     
 def main(lr=0.001, epochs=2, batch_size=256):
+    # from main import log, myHandler
+
+    # log.addHandler(myHandler)
+
+    log.info('list cwd2: {}'.format(os.getcwd()))
+    log.info('*******************************************************************************')
+    log.info('testing logging abilities')
     mj = MagicObj()
     fileHelper = magic.FileHelper()
 
