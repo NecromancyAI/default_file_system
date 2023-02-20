@@ -73,7 +73,7 @@ def main(lr=0.001, epochs=2, batch_size=256):
     val_loader = torch.utils.data.DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
 
     model = Model()
-    pretrained_state = fileHelper.get("data://checkpoint/models/checkpoint.pt")
+    pretrained_state = fileHelper.get("data://checkpoint/models/checkpoint.pt", local_path="/Users/noam/checkpoint.pt")
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     prefix = 'classifier.'
     loaded_dict = torch.load(pretrained_state, map_location=device)
